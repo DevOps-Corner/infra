@@ -1,0 +1,2 @@
+region      = "westeurope"
+environment = "test"
