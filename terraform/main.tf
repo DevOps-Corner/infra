@@ -124,7 +124,7 @@ resource "azurerm_virtual_machine" "vm" {
   location              = var.region
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
-  vm_size               = "Standard_B1ls"
+  vm_size               = "Standard_B2s"
 
   storage_os_disk {
     name              = "test"
