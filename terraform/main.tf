@@ -1,5 +1,12 @@
 terraform {
   required_version = "~> 0.12.0"
+
+  backend "remote" {
+    organization = "eknert"
+    workspaces {
+      name = "infra"
+    }
+  }
 }
 
 provider "azurerm" {
@@ -119,12 +126,53 @@ resource "azurerm_storage_account" "storageaccount" {
   }
 }
 
+resource "azurerm_managed_disk" "managed_disk_1" {
+  name                 = "disk1"
+  location             = var.region
+  resource_group_name  = azurerm_resource_group.rg.name
+  storage_account_type = "Premium_LRS"
+  create_option        = "Empty"
+  disk_size_gb         = "64"
+
+  tags = {
+    environment = "test"
+  }
+}
+
+resource "azurerm_managed_disk" "managed_disk_2" {
+  name                 = "disk2"
+  location             = var.region
+  resource_group_name  = azurerm_resource_group.rg.name
+  storage_account_type = "Premium_LRS"
+  create_option        = "Copy"
+  source_resource_id   = azurerm_managed_disk.managed_disk_1.id
+  disk_size_gb         = "64"
+
+  tags = {
+    environment = "test"
+  }
+}
+
+
+resource "azurerm_container_registry" "acr" {
+  name                     = "registry"
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = var.region
+  sku                      = "Standard"
+  admin_enabled            = false
+
+  tags = {
+    environment = var.environment
+  }
+}
+
+
 resource "azurerm_virtual_machine" "vm" {
   name                  = "test"
   location              = var.region
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
-  vm_size               = "Standard_B2s"
+  vm_size               = "Standard_B1S"
 
   storage_os_disk {
     name              = "test"
