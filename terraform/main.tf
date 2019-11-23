@@ -17,22 +17,13 @@ provider "random" {
   version = "~> 2.2"
 }
 
-variable "region" {
-  type        = string
-  description = "Region of deployment"
-}
-
-variable "environment" {
-  type        = string
-  description = "Name of environment"
-}
-
 resource "azurerm_resource_group" "rg" {
   name     = "test"
   location = var.region
 
   tags = {
     environment = var.environment
+    terraform = true
   }
 }
 
@@ -44,6 +35,7 @@ resource "azurerm_virtual_network" "vn" {
 
   tags = {
     environment = var.environment
+    terraform = true
   }
 }
 
@@ -52,6 +44,11 @@ resource "azurerm_subnet" "subnet" {
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vn.name
   address_prefix       = "10.0.2.0/24"
+
+  tags = {
+    environment = var.environment
+    terraform = true
+  }
 }
 
 resource "azurerm_public_ip" "publicip" {
@@ -62,6 +59,7 @@ resource "azurerm_public_ip" "publicip" {
 
   tags = {
     environment = var.environment
+    terraform = true
   }
 }
 
@@ -84,6 +82,7 @@ resource "azurerm_network_security_group" "nsg" {
 
   tags = {
     environment = var.environment
+    terraform = true
   }
 }
 
@@ -102,6 +101,7 @@ resource "azurerm_network_interface" "nic" {
 
   tags = {
     environment = var.environment
+    terraform = true
   }
 }
 
@@ -112,6 +112,11 @@ resource "random_id" "random" {
   }
 
   byte_length = 8
+
+  tags = {
+    environment = var.environment
+    terraform = true
+  }
 }
 
 resource "azurerm_storage_account" "storageaccount" {
@@ -123,6 +128,7 @@ resource "azurerm_storage_account" "storageaccount" {
 
   tags = {
     environment = var.environment
+    terraform = true
   }
 }
 
@@ -135,7 +141,8 @@ resource "azurerm_managed_disk" "managed_disk_1" {
   disk_size_gb         = "64"
 
   tags = {
-    environment = "test"
+    environment = var.environment
+    terraform = true
   }
 }
 
@@ -149,7 +156,8 @@ resource "azurerm_managed_disk" "managed_disk_2" {
   disk_size_gb         = "64"
 
   tags = {
-    environment = "test"
+    environment = var.environment
+    terraform = true
   }
 }
 
@@ -162,6 +170,7 @@ resource "azurerm_container_registry" "acr" {
 
   tags = {
     environment = var.environment
+    terraform = true
   }
 }
 
@@ -205,6 +214,7 @@ resource "azurerm_virtual_machine" "vm" {
   }
 
   tags = {
-    environment = "test"
+    environment = var.environment
+    terraform = true
   }
 }
