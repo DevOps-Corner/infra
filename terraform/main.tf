@@ -23,7 +23,7 @@ resource "azurerm_resource_group" "rg" {
 
   tags = {
     environment = var.environment
-    terraform = true
+    terraform   = true
   }
 }
 
@@ -35,7 +35,7 @@ resource "azurerm_virtual_network" "vn" {
 
   tags = {
     environment = var.environment
-    terraform = true
+    terraform   = true
   }
 }
 
@@ -56,7 +56,7 @@ resource "azurerm_public_ip" "publicip" {
 
   tags = {
     environment = var.environment
-    terraform = true
+    terraform   = true
   }
 }
 
@@ -79,7 +79,7 @@ resource "azurerm_network_security_group" "nsg" {
 
   tags = {
     environment = var.environment
-    terraform = true
+    terraform   = true
   }
 }
 
@@ -98,7 +98,7 @@ resource "azurerm_network_interface" "nic" {
 
   tags = {
     environment = var.environment
-    terraform = true
+    terraform   = true
   }
 }
 
@@ -121,7 +121,7 @@ resource "azurerm_storage_account" "storageaccount" {
 
   tags = {
     environment = var.environment
-    terraform = true
+    terraform   = true
   }
 }
 
@@ -135,7 +135,7 @@ resource "azurerm_managed_disk" "managed_disk_1" {
 
   tags = {
     environment = var.environment
-    terraform = true
+    terraform   = true
   }
 }
 
@@ -150,7 +150,7 @@ resource "azurerm_managed_disk" "managed_disk_2" {
 
   tags = {
     environment = var.environment
-    terraform = true
+    terraform   = true
   }
 }
 
@@ -163,7 +163,7 @@ resource "azurerm_container_registry" "acr" {
 
   tags = {
     environment = var.environment
-    terraform = true
+    terraform   = true
   }
 }
 
@@ -208,6 +208,6 @@ resource "azurerm_virtual_machine" "vm" {
 
   tags = {
     environment = var.environment
-    terraform = true
+    terraform   = true
   }
 }
