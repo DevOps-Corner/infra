@@ -45,10 +45,7 @@ resource "azurerm_subnet" "subnet" {
   virtual_network_name = azurerm_virtual_network.vn.name
   address_prefix       = "10.0.2.0/24"
 
-  tags = {
-    environment = var.environment
-    terraform = true
-  }
+  # Does not support tags
 }
 
 resource "azurerm_public_ip" "publicip" {
@@ -110,13 +107,9 @@ resource "random_id" "random" {
     # Generate a new ID only when a new resource group is defined
     resource_group = azurerm_resource_group.rg.name
   }
-
   byte_length = 8
 
-  tags = {
-    environment = var.environment
-    terraform = true
-  }
+  # Does not support tags
 }
 
 resource "azurerm_storage_account" "storageaccount" {

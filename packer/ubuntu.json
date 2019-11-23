@@ -19,10 +19,14 @@
     "image_sku": "18.04-LTS",
 
     "managed_image_resource_group_name": "{{user `resource_group`}}",
-    "managed_image_name": "packer-test-image",
+    "managed_image_name": "ubuntu-matomo",
 
     "location": "{{user `location`}}",
-    "vm_size": "Standard_DS2_v2"
+    "vm_size": "Standard_DS2_v2",
+
+    "azure_tags": {
+      "environment": "test"
+    }
   }],
   "provisioners": [{
     "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E sh '{{ .Path }}'",
