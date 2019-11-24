@@ -167,6 +167,11 @@ resource "azurerm_container_registry" "acr" {
   }
 }
 
+data "azurerm_image" "images" {
+  name                = "ubuntu-matomo"
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
 resource "azurerm_virtual_machine" "vm" {
   name                  = "test"
   location              = var.region
@@ -183,7 +188,7 @@ resource "azurerm_virtual_machine" "vm" {
 
   storage_image_reference {
     # TODO: Use variable, and should be same for packer and terraform
-    id = "ubuntu-matomo"
+    id = data.azurerm_image.images.id
   }
 
   os_profile {
