@@ -125,8 +125,29 @@ resource "azurerm_storage_account" "storageaccount" {
   }
 }
 
-resource "azurerm_managed_disk" "managed_disk_1" {
+# Requires the image to have been built by packer beforehand
+data "azurerm_image" "images" {
+  name                = "ubuntu-matomo"
+  resource_group_name = azurerm_resource_group.rg.name
+}
+
+resource "azurerm_managed_disk" "mdisk1" {
   name                 = "disk1"
+  location             = var.region
+  resource_group_name  = azurerm_resource_group.rg.name
+  storage_account_type = "Premium_LRS"
+  create_option        = "FromImage"
+  disk_size_gb         = "64"
+  image_reference_id   = data.azurerm_image.images.id
+
+  tags = {
+    environment = var.environment
+    terraform   = true
+  }
+}
+
+resource "azurerm_managed_disk" "mdisk2" {
+  name                 = "disk2"
   location             = var.region
   resource_group_name  = azurerm_resource_group.rg.name
   storage_account_type = "Premium_LRS"
@@ -139,26 +160,6 @@ resource "azurerm_managed_disk" "managed_disk_1" {
   }
 }
 
-resource "azurerm_managed_disk" "managed_disk_2" {
-  name                 = "disk2"
-  location             = var.region
-  resource_group_name  = azurerm_resource_group.rg.name
-  storage_account_type = "Premium_LRS"
-  create_option        = "Copy"
-  source_resource_id   = azurerm_managed_disk.managed_disk_1.id
-  disk_size_gb         = "64"
-
-  tags = {
-    environment = var.environment
-    terraform   = true
-  }
-}
-
-data "azurerm_image" "images" {
-  name                = "ubuntu-matomo"
-  resource_group_name = azurerm_resource_group.rg.name
-}
-
 resource "azurerm_virtual_machine" "vm" {
   name                  = "test"
   location              = var.region
@@ -167,15 +168,11 @@ resource "azurerm_virtual_machine" "vm" {
   vm_size               = "Standard_B1S"
 
   storage_os_disk {
-    name              = "test"
+    name              = "os-disk"
+    create_option     = "Attach"
     caching           = "ReadWrite"
-    create_option     = "FromImage"
+    managed_disk_id   = azurerm_managed_disk.mdisk1.id
     managed_disk_type = "Premium_LRS"
-  }
-
-  storage_image_reference {
-    # TODO: Use variable, and should be same for packer and terraform
-    id = data.azurerm_image.images.id
   }
 
   os_profile {
