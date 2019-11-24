@@ -131,21 +131,6 @@ data "azurerm_image" "images" {
   resource_group_name = azurerm_resource_group.rg.name
 }
 
-resource "azurerm_managed_disk" "mdisk1" {
-  name                 = "disk1"
-  location             = var.region
-  resource_group_name  = azurerm_resource_group.rg.name
-  storage_account_type = "Premium_LRS"
-  create_option        = "FromImage"
-  disk_size_gb         = "64"
-  image_reference_id   = data.azurerm_image.images.id
-
-  tags = {
-    environment = var.environment
-    terraform   = true
-  }
-}
-
 resource "azurerm_managed_disk" "mdisk2" {
   name                 = "disk2"
   location             = var.region
@@ -160,23 +145,28 @@ resource "azurerm_managed_disk" "mdisk2" {
   }
 }
 
-resource "azurerm_virtual_machine" "vm" {
-  name                  = "test"
+resource "azurerm_virtual_machine" "matomo-vm" {
+  name                  = "matomo"
   location              = var.region
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.nic.id]
   vm_size               = "Standard_B1S"
 
   storage_os_disk {
-    name              = "os-disk"
-    create_option     = "Attach"
+    name              = "matomo-os-disk"
+    create_option     = "FromImage"
     caching           = "ReadWrite"
-    managed_disk_id   = azurerm_managed_disk.mdisk1.id
     managed_disk_type = "Premium_LRS"
+    disk_size_gb      = "64"
+  }
+
+  storage_image_reference {
+    # TODO: Use variable, and should be same for packer and terraform
+    id = data.azurerm_image.images.id
   }
 
   os_profile {
-    computer_name  = "vm"
+    computer_name  = "matomo"
     admin_username = "andekn"
   }
 
