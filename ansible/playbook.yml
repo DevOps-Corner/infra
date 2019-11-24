@@ -1,0 +1,11 @@
+---
+- hosts: all
+  gather_facts: no
+  vars:
+    db_username: matomo
+  vars_files:
+    - /opt/ansible/vars.yml
+  tasks:
+  - name: Apply motomo role
+    include_role:
+      name: matomo

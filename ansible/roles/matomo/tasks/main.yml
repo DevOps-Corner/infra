@@ -1,0 +1,120 @@
+- name: Upgrade all packages to the latest version
+  become: yes
+  apt:
+    name: "*"
+    state: latest
+    force_apt_get: true
+
+# - name: Enable automatic secruity upgrades
+#   become: yes
+#   command: unattended-upgrade
+#   ignore_errors: yes
+
+- name: Install LAMP
+  become: yes
+  apt:
+    force_apt_get: true
+    update_cache: yes
+    pkg:
+      - libarchive-tools
+      - python3-apt
+      - python3-mysqldb
+      - apache2
+      - php7.2
+      - php7.2-curl
+      - php7.2-gd
+      - php7.2-cli
+      - mysql-server
+      - php7.2-mysql
+      - php7.2-xml
+      - php7.2-mbstring
+      - php7.2-geoip
+
+- name: Remove default Apache page
+  become: yes
+  file:
+    state: absent
+    path: /var/www/html/index.html
+
+- name: Enable Apache SSL module
+  become: yes
+  apache2_module:
+    state: present
+    name: ssl
+  notify: Restart Apache
+
+- name: Set proper Apache owner/group
+  become: yes
+  file:
+    path: /var/www/html
+    state: directory
+    recurse: yes
+    owner: www-data
+    group: www-data
+  notify: Restart Apache
+
+- name: Configure php.ini
+  become: yes
+  lineinfile:
+    path: /etc/php/7.2/apache2/php.ini
+    regexp: '^;always_populate_raw_post_data = -1'
+    line: 'always_populate_raw_post_data = -1'
+
+- name: Start MySQL
+  service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: Create Matomo database
+  become: yes
+  mysql_user:
+    name: "{{ db_username }}"
+    password: "{{ db_password }}"
+    priv: '*.*:ALL'
+    state: present
+
+- name: Change max_allowed_packet size to 64MB
+  become: yes
+  lineinfile:
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    regexp: '^\s*max_allowed_packet\s+=\s+(\d+)M.*$'
+    line: 'max_allowed_packet = 64M'
+    backrefs: yes
+  notify: Restart MySQL
+
+- name: Matomo | Download
+  get_url:
+    url: https://builds.matomo.org/matomo.zip
+    dest: /tmp
+
+- name: Matomo | Extract zip
+  become: yes
+  become_user: www-data
+  command: bsdtar --strip-components=1 -xvf /tmp/matomo.zip -C /var/www/html/
+
+- name: Matomo | Set force_ssl to true
+  become: yes
+  become_user: www-data
+  lineinfile:
+    path: /var/www/html/config/global.ini.php
+    line: 'force_ssl = 1'
+    insertafter: '\[General\]'
+
+- name: Matomo | Create log directory
+  become: yes
+  file:
+    path: /var/log/matomo
+    state: directory
+    owner: 'www-data'
+    group: 'www-data'
+    mode: '0750'
+
+# - name: Matomo | Automatically archive reports
+#   become: yes
+#   become_user: www-data
+#   cron:
+#     name: 'archive matomo reports'
+#     minute: '5'
+#     user: 'www-data'
+#     job: "/usr/bin/php /var/www/html/console core:archive --url=https://{{ certificate_domain }} > /var/log/matomo/archive.log"
