@@ -1,2 +1,0 @@
-region      = "westeurope"
-environment = "test"
