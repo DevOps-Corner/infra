@@ -154,19 +154,6 @@ resource "azurerm_managed_disk" "managed_disk_2" {
   }
 }
 
-resource "azurerm_container_registry" "acr" {
-  name                = "eknert"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = var.region
-  sku                 = "Standard"
-  admin_enabled       = false
-
-  tags = {
-    environment = var.environment
-    terraform   = true
-  }
-}
-
 data "azurerm_image" "images" {
   name                = "ubuntu-matomo"
   resource_group_name = azurerm_resource_group.rg.name
