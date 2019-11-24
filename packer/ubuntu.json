@@ -30,6 +30,6 @@
   }],
   "provisioners": [{
     "type": "ansible",
-    "playbook_file": "../ansible/main.yaml"
+    "playbook_file": "../ansible/playbook.yml"
   }]
 }
