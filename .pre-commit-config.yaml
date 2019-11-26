@@ -8,11 +8,7 @@
     - id: terraform_fmt
     - id: terraform_docs
     - id: terraform_validate
-
-# TODO: Seems broken
 - repo: https://github.com/ansible/ansible-lint
   rev: v4.2.0rc1
   hooks:
     - id: ansible-lint
-#      files: \.(yaml|yml)$
-# TODO: packer validate
