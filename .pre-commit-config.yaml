@@ -6,12 +6,6 @@
   rev: v1.15.0
   hooks:
     - id: prettier
-- repo: git://github.com/antonbabenko/pre-commit-terraform
-  rev: v1.19.0
-  hooks:
-    - id: terraform_fmt
-    - id: terraform_docs
-    - id: terraform_validate
 - repo: https://github.com/ansible/ansible-lint
   rev: v4.2.0rc1
   hooks:
