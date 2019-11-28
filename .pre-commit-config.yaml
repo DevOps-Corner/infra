@@ -2,6 +2,10 @@
   rev: v2.4.0
   hooks:
     - id: trailing-whitespace
+- repo: https://github.com/prettier/prettier
+  rev: v1.15.0
+  hooks:
+    - id: prettier
 - repo: git://github.com/antonbabenko/pre-commit-terraform
   rev: v1.19.0
   hooks:
