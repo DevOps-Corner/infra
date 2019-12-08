@@ -1,13 +1,6 @@
-**/.terraform/*
-
-*.tfstate
-*.tfstate.*
+bin/
+node_modules/
 
 crash.log
-
-override.tf
-override.tf.json
-*_override.tf
-*_override.tf.json
 
 **/.vagrant/*
